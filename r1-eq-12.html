@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Evaluación - Lean Warehousing</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Chosen Palette: Warm Neutrals with Emerald Accents. 
+         Background: stone-50, Cards: white, Text: stone-800/stone-600, Accent: emerald-600/emerald-700 
+         This palette reflects a calm, professional, and data-driven environment (Lean). -->
+
+    <!-- Application Structure Plan: 
+         - Architecture: Executive Dashboard Layout.
+         - Rationale: The evaluation report contains highly quantitative data mixed with strategic insights. A dashboard allows for immediate visualization of critical KPIs (Efficiency, Lead Time) while providing structured sections for deeper statistical analysis and actionable recommendations.
+         - User Flow: 
+            1. Hero Section (Summary & Score) -> Immediate context.
+            2. "Diagnóstico Operativo" -> Understand the current physical flow problem (Takt vs Cycle).
+            3. "Benchmarking" -> Contextualize the problem against industry standards.
+            4. "Rigor Analítico" -> Validate the problem with statistics.
+            5. "Plan de Acción" -> Interactive recommendations for continuous improvement. -->
+
+    <!-- Visualization & Content Choices: 
+         1. Takt vs Cycle Time -> Bar Chart (Chart.js) -> Goal: Compare -> Shows the exact bottleneck deficit.
+         2. Lead Time vs Benchmark -> Horizontal Bar Chart (Chart.js) -> Goal: Compare -> Visualizes the huge gap between current state and industry standards.
+         3. System Efficiency -> Doughnut Chart (Chart.js) -> Goal: Inform -> Instantly shows the 47% efficiency metric.
+         4. WIP & Stats -> Dynamic Stat Cards (HTML/CSS) -> Goal: Inform -> Highlights critical numbers like 534,907 pieces.
+         5. Recommendations -> Interactive Tabs (JS/HTML) -> Goal: Organize/Interact -> Allows users to explore next steps without cluttering the screen.
+         - CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. HTML/CSS and Canvas only. -->
+
+    <style>
+        /* CSS Base y Tipografía */
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: #fafaf9; /* stone-50 */
+            color: #292524; /* stone-800 */
+        }
+
+        /* Requisito Estricto: Contenedores de Gráficos (Chart Containers) */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px; /* Previene anchos excesivos en pantallas grandes */
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px; /* Altura base controlada */
+            max-height: 400px; /* Límite de altura para prevenir overflow vertical */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @media (min-width: 768px) {
+            .chart-container { 
+                height: 350px; 
+            }
+        }
+
+        /* Utilidades para interactividad */
+        .tab-btn.active {
+            border-bottom: 2px solid #059669; /* emerald-600 */
+            color: #059669;
+            font-weight: 600;
+        }
+        
+        /* Ocultar barra de desplazamiento horizontal global */
+        html, body {
+            overflow-x: hidden;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Navegación Superior -->
+    <nav class="bg-white border-b border-stone-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <span class="text-2xl mr-2">📊</span>
+                    <span class="font-bold text-xl text-stone-800">Practicum Eval<span class="text-emerald-600">Pro</span></span>
+                </div>
+                <div class="flex items-center hidden md:flex space-x-8">
+                    <a href="#diagnostico" class="text-stone-500 hover:text-emerald-600 transition">Diagnóstico</a>
+                    <a href="#benchmark" class="text-stone-500 hover:text-emerald-600 transition">Benchmarking</a>
+                    <a href="#estadistica" class="text-stone-500 hover:text-emerald-600 transition">Rigor Estadístico</a>
+                    <a href="#recomendaciones" class="text-stone-500 hover:text-emerald-600 transition">Recomendaciones</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sección Hero / Resumen Ejecutivo -->
+    <header class="bg-white border-b border-stone-200 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+                <div class="md:w-2/3">
+                    <div class="inline-block px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full text-sm font-semibold tracking-wide mb-4">
+                        Evaluación Oficial Completada
+                    </div>
+                    <h1 class="text-3xl md:text-4xl font-extrabold text-stone-900 mb-2">
+                        Implementación de Lean Warehousing
+                    </h1>
+                    <h2 class="text-xl text-stone-500 mb-6">Vertical Knits, S.A. de C.V. | Autora: Julie Melissa Pineda Maldonado</h2>
+                    <p class="text-stone-600 leading-relaxed max-w-3xl">
+                        Este dashboard presenta el veredicto del análisis de resultados del proyecto. Un diagnóstico de ingeniería industrial impecable que transita del "conocimiento tribal" a una base empírica estructurada, aplicando la metodología DMAIC y principios Lean para resolver estancamientos físicos de flujo.
+                    </p>
+                </div>
+                <div class="mt-8 md:mt-0 md:w-1/3 flex justify-center md:justify-end">
+                    <div class="bg-stone-50 border border-stone-200 rounded-xl p-6 text-center shadow-sm">
+                        <div class="text-sm text-stone-500 uppercase tracking-wide font-semibold mb-1">Calificación Final</div>
+                        <div class="text-6xl font-black text-emerald-600">16<span class="text-3xl text-stone-400">/16</span></div>
+                        <div class="mt-2 text-stone-600 font-medium">Nivel: Sobresaliente ⭐⭐⭐⭐</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+
+        <!-- SECCIÓN 1: Diagnóstico Operativo -->
+        <section id="diagnostico" class="scroll-mt-20">
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold border-b-2 border-emerald-600 pb-2 inline-block">Diagnóstico de Flujo y Cuello de Botella</h2>
+                <p class="mt-4 text-stone-600 leading-relaxed">
+                    <strong>Propósito de esta sección:</strong> Visualizar el origen mecánico del problema de flujo en el almacén. Basado en el mapeo VSM (Value Stream Mapping), esta sección compara el ritmo demandado por el cliente con el ritmo real de trabajo, y expone la eficiencia calculada del sistema actual. Esto permite entender cuantitativamente por qué se genera la acumulación de inventario.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Gráfico Takt vs Cycle -->
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-stone-200 flex flex-col">
+                    <h3 class="font-bold text-lg mb-2 text-center">Takt Time vs. Kitting Cycle Time</h3>
+                    <p class="text-sm text-stone-500 mb-4 text-center">Déficit operativo de 1.33 segundos por unidad</p>
+                    <div class="flex-grow flex items-center justify-center">
+                        <div class="chart-container">
+                            <canvas id="taktChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="mt-4 p-3 bg-red-50 rounded text-sm text-red-800 border border-red-100">
+                        <strong>Insight:</strong> La estación de Kitting opera mucho más lento (2.50s) de lo que exige la demanda (1.17s), creando el cuello de botella principal.
+                    </div>
+                </div>
+
+                <!-- Gráfico Eficiencia -->
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-stone-200 flex flex-col">
+                    <h3 class="font-bold text-lg mb-2 text-center">Eficiencia del Sistema Requerida (η)</h3>
+                    <p class="text-sm text-stone-500 mb-4 text-center">Rendimiento actual vs Ideal</p>
+                    <div class="flex-grow flex items-center justify-center">
+                        <div class="chart-container" style="max-width: 350px;">
+                            <canvas id="efficiencyChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="mt-4 p-3 bg-stone-50 rounded text-sm text-stone-700 border border-stone-200">
+                        <strong>Causas Raíz identificadas:</strong> Sobreprocesamiento administrativo (registros en Excel) y falta de reglas de acomodo (put-away rules).
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 2: Benchmarking -->
+        <section id="benchmark" class="scroll-mt-20">
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold border-b-2 border-emerald-600 pb-2 inline-block">Análisis Comparativo y Benchmarking</h2>
+                <p class="mt-4 text-stone-600 leading-relaxed">
+                    <strong>Propósito de esta sección:</strong> Contextualizar la gravedad del problema comparando el rendimiento del sistema actual (estado Push) contra los estándares globales de la industria. Se ilustra cómo el déficit de tiempos analizado anteriormente impacta directamente en el tiempo total de cruce del producto.
+                </p>
+            </div>
+
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-stone-200">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+                    <div class="lg:col-span-1">
+                        <div class="bg-stone-50 rounded-lg p-6 border border-stone-200">
+                            <div class="text-4xl text-center mb-4">⏱️</div>
+                            <h3 class="font-bold text-lg text-center mb-2">Impacto en el Lead Time</h3>
+                            <p class="text-sm text-stone-600 text-center mb-4">
+                                El sistema Push no regulado ha provocado un estancamiento masivo. El tiempo que tarda el material en atravesar el proceso es alarmantemente superior al estándar aceptable para componentes de alta rotación.
+                            </p>
+                            <div class="text-center font-bold text-emerald-700">
+                                Justificación contundente para la intervención Lean.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-2">
+                        <div class="chart-container">
+                            <canvas id="leadTimeChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 3: Rigor Estadístico -->
+        <section id="estadistica" class="scroll-mt-20">
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold border-b-2 border-emerald-600 pb-2 inline-block">Rigor Estadístico y Consecuencias del Flujo</h2>
+                <p class="mt-4 text-stone-600 leading-relaxed">
+                    <strong>Propósito de esta sección:</strong> Demostrar empíricamente que los problemas identificados no son eventos aleatorios. Aquí se exponen los datos duros resultantes del cuello de botella y la validación estadística inferencial que confirma la naturaleza estructural del defecto operativo.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Tarjeta WIP -->
+                <div class="bg-orange-50 border border-orange-200 rounded-xl p-8 shadow-sm relative overflow-hidden">
+                    <div class="absolute -right-4 -top-4 text-8xl opacity-10">📦</div>
+                    <h3 class="text-orange-800 font-bold text-xl mb-1">Patrón Sintomático: Sistema Push</h3>
+                    <div class="text-sm text-orange-700/80 uppercase font-semibold tracking-wider mb-4">Work-In-Process (WIP) Acumulado</div>
+                    <div class="text-5xl font-black text-orange-600 mb-4">534,907 <span class="text-xl font-medium">piezas</span></div>
+                    <p class="text-orange-800 text-sm">
+                        La identificación de este volumen no es un evento aislado. Se reconocen variables inesperadas como limitantes ergonómicas, variabilidad de lotes y el "Efecto Hawthorne".
+                    </p>
+                </div>
+
+                <!-- Tarjeta T-Test -->
+                <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-8 shadow-sm relative overflow-hidden">
+                    <div class="absolute -right-4 -top-4 text-8xl opacity-10">📈</div>
+                    <h3 class="text-emerald-800 font-bold text-xl mb-1">Validación Empírica</h3>
+                    <div class="text-sm text-emerald-700/80 uppercase font-semibold tracking-wider mb-4">One-Sample T-Test (Estación Kitting)</div>
+                    
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div class="bg-white p-3 rounded-lg border border-emerald-100 text-center">
+                            <div class="text-xs text-stone-500 uppercase">Muestra (n)</div>
+                            <div class="text-xl font-bold text-stone-800">50</div>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg border border-emerald-100 text-center">
+                            <div class="text-xs text-stone-500 uppercase">Desv. Est. (σ)</div>
+                            <div class="text-xl font-bold text-stone-800">0.12</div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center space-x-2 bg-emerald-600 text-white p-3 rounded-lg mb-2 justify-center">
+                        <span class="font-mono font-bold text-lg">p-value < 0.001</span>
+                    </div>
+                    <p class="text-emerald-800 text-sm mt-2">
+                        Valida empíricamente que la ineficiencia es un defecto estructural y no producto de la varianza aleatoria operativa. Extraordinario rigor analítico.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 4: Recomendaciones -->
+        <section id="recomendaciones" class="scroll-mt-20">
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold border-b-2 border-emerald-600 pb-2 inline-block">Sugerencias del Consultor (Mejora Continua)</h2>
+                <p class="mt-4 text-stone-600 leading-relaxed">
+                    <strong>Propósito de esta sección:</strong> Proveer retroalimentación accionable para las Fases II (Estandarización) y III (Flujo) del ciclo DMAIC. Seleccione cada recomendación para explorar el detalle táctico requerido para llevar el análisis numérico a un nivel más granular.
+                </p>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-stone-200 overflow-hidden">
+                <!-- Navegación de Pestañas -->
+                <div class="flex flex-col sm:flex-row border-b border-stone-200 bg-stone-50">
+                    <button class="tab-btn active px-6 py-4 text-left sm:text-center text-sm font-medium text-stone-600 hover:bg-stone-100 transition focus:outline-none" onclick="openTab(event, 'rec1')">
+                        1. Desglose Micro-Analítico
+                    </button>
+                    <button class="tab-btn px-6 py-4 text-left sm:text-center text-sm font-medium text-stone-600 hover:bg-stone-100 transition focus:outline-none" onclick="openTab(event, 'rec2')">
+                        2. Mapeo Estado Futuro
+                    </button>
+                    <button class="tab-btn px-6 py-4 text-left sm:text-center text-sm font-medium text-stone-600 hover:bg-stone-100 transition focus:outline-none" onclick="openTab(event, 'rec3')">
+                        3. Estratificación de Defectos
+                    </button>
+                </div>
+
+                <!-- Contenido de Pestañas -->
+                <div class="p-8 min-h-[250px]">
+                    <div id="rec1" class="tab-content block">
+                        <div class="flex items-start">
+                            <div class="text-4xl mr-4">⏱️</div>
+                            <div>
+                                <h3 class="text-xl font-bold text-stone-800 mb-2">Estudio de Tiempos y Movimientos</h3>
+                                <p class="text-stone-600 mb-4">
+                                    Sabemos categóricamente que Kitting toma 2.50 segundos. Sin embargo, para rediseñar la estación (SOPs), necesitamos saber <em>de qué</em> se componen esos 2.50 segundos.
+                                </p>
+                                <div class="bg-stone-50 p-4 rounded-lg border border-stone-200 border-l-4 border-l-emerald-500">
+                                    <strong>Acción Recomendada:</strong> Aplicar un diagrama de operaciones bimanual o una gráfica de Trabajo Estandarizado (Standardized Work Chart) para separar el tiempo de valor agregado del desperdicio (movimiento de manos, búsquedas, alcance, etc.) dentro de esa sub-operación.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="rec2" class="tab-content hidden">
+                        <div class="flex items-start">
+                            <div class="text-4xl mr-4">🗺️</div>
+                            <div>
+                                <h3 class="text-xl font-bold text-stone-800 mb-2">Future State VSM</h3>
+                                <p class="text-stone-600 mb-4">
+                                    Se ha presentado de manera magistral el VSM del estado actual. Para que la metodología esté completa, el análisis de resultados debe proyectar un VSM de Estado Futuro.
+                                </p>
+                                <div class="bg-stone-50 p-4 rounded-lg border border-stone-200 border-l-4 border-l-emerald-500">
+                                    <strong>Acción Recomendada:</strong> Establecer una meta cuantitativa. ¿A cuánto se reducirán los 22 días de Lead Time una vez implementado el sistema Pull (Kanban) y el rebalanceo? Proyectar visualmente el nuevo flujo.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="rec3" class="tab-content hidden">
+                        <div class="flex items-start">
+                            <div class="text-4xl mr-4">📊</div>
+                            <div>
+                                <h3 class="text-xl font-bold text-stone-800 mb-2">Diagrama de Pareto</h3>
+                                <p class="text-stone-600 mb-4">
+                                    Se menciona el problema del sobreprocesamiento, retrabajos y errores en los kits. Es necesario jerarquizar estos problemas para dirigir los esfuerzos de Poka-Yokes digitales.
+                                </p>
+                                <div class="bg-stone-50 p-4 rounded-lg border border-stone-200 border-l-4 border-l-emerald-500">
+                                    <strong>Acción Recomendada:</strong> Incluir un análisis de Pareto que categorice los principales motivos de fallas o demoras en la línea (ej. material faltante, etiqueta incorrecta, error de captura manual). Esto priorizará el desarrollo tecnológico.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-stone-900 text-stone-400 py-8 text-center mt-12">
+        <div class="max-w-7xl mx-auto px-4">
+            <p>&copy; 2026 Practicum O. Resultados - Consultoría Senior.</p>
+            <p class="text-sm mt-2">Dashboard generado para análisis interno de la evaluación del Practicum I.</p>
+        </div>
+    </footer>
+
+    <!-- Lógica JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // Configuración común para Chart.js
+            Chart.defaults.font.family = "'Segoe UI', system-ui, sans-serif";
+            Chart.defaults.color = '#57534e'; // stone-500
+            
+            // 1. Gráfico Takt vs Cycle (Bar)
+            const ctxTakt = document.getElementById('taktChart').getContext('2d');
+            new Chart(ctxTakt, {
+                type: 'bar',
+                data: {
+                    labels: ['Takt Time (Demanda)', 'Cycle Time (Kitting)'],
+                    datasets: [{
+                        label: 'Segundos',
+                        data: [1.17, 2.50],
+                        backgroundColor: [
+                            '#059669', // Emerald-600 (Bueno/Meta)
+                            '#ef4444'  // Red-500 (Problema)
+                        ],
+                        borderWidth: 0,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false, // Crítico para los chart-containers responsivos
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.parsed.y + ' segundos';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Segundos por Unidad' }
+                        }
+                    }
+                }
+            });
+
+            // 2. Gráfico Eficiencia (Doughnut)
+            const ctxEff = document.getElementById('efficiencyChart').getContext('2d');
+            new Chart(ctxEff, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Eficiencia Actual', 'Brecha (Ineficiencia)'],
+                    datasets: [{
+                        data: [47, 53],
+                        backgroundColor: [
+                            '#059669', // Emerald-600
+                            '#e7e5e4'  // stone-200
+                        ],
+                        borderWidth: 0,
+                        cutout: '75%'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + context.parsed + '%';
+                                }
+                            }
+                        }
+                    }
+                },
+                plugins: [{
+                    // Plugin para dibujar el porcentaje en el centro
+                    id: 'textCenter',
+                    beforeDraw: function(chart) {
+                        var width = chart.width,
+                            height = chart.height,
+                            ctx = chart.ctx;
+
+                        ctx.restore();
+                        var fontSize = (height / 114).toFixed(2);
+                        ctx.font = "bold " + fontSize + "em sans-serif";
+                        ctx.textBaseline = "middle";
+                        ctx.fillStyle = "#059669";
+
+                        var text = "47%",
+                            textX = Math.round((width - ctx.measureText(text).width) / 2),
+                            textY = height / 2 - 10; // Ajuste por la leyenda
+
+                        ctx.fillText(text, textX, textY);
+                        ctx.save();
+                    }
+                }]
+            });
+
+            // 3. Gráfico Lead Time vs Benchmark (Horizontal Bar)
+            const ctxLead = document.getElementById('leadTimeChart').getContext('2d');
+            new Chart(ctxLead, {
+                type: 'bar',
+                data: {
+                    labels: ['Benchmark Lean (Ind.)', 'Lead Time Actual'],
+                    datasets: [{
+                        label: 'Días',
+                        data: [4, 22], // 4 representa la media de 3 a 5 días
+                        backgroundColor: [
+                            '#10b981', // emerald-500
+                            '#f97316'  // orange-500
+                        ],
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    indexAxis: 'y', // Hace que las barras sean horizontales
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    if(context.dataIndex === 0) return '3 a 5 Días (Promedio 4)';
+                                    return context.parsed.x + ' Días';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Días de Lead Time' }
+                        }
+                    }
+                }
+            });
+        });
+
+        // Lógica para las pestañas de Recomendaciones
+        function openTab(evt, tabName) {
+            // Ocultar todos los contenidos de pestaña
+            var tabContents = document.getElementsByClassName("tab-content");
+            for (var i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.add("hidden");
+                tabContents[i].classList.remove("block");
+            }
+
+            // Desactivar estilo "active" de todos los botones
+            var tabBtns = document.getElementsByClassName("tab-btn");
+            for (var i = 0; i < tabBtns.length; i++) {
+                tabBtns[i].classList.remove("active");
+            }
+
+            // Mostrar el contenido actual y añadir "active" al botón clickeado
+            document.getElementById(tabName).classList.remove("hidden");
+            document.getElementById(tabName).classList.add("block");
+            evt.currentTarget.classList.add("active");
+        }
+    </script>
+</body>
+</html>
