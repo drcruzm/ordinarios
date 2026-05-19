@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte de Evaluación - Practicum I: Autocar de Yucatán</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 p-6">
+
+    <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-xl p-8 border border-slate-200">
+        <header class="mb-8 border-b pb-4">
+            <h1 class="text-3xl font-bold text-slate-900">Auditoría Técnica de Resultados</h1>
+            <p class="text-slate-600">Practicum I: Autocar de Yucatán</p>
+            <div class="mt-4 inline-block bg-teal-600 text-white px-4 py-2 rounded-lg font-bold text-xl">
+                Calificación Final: 13 / 16
+            </div>
+        </header>
+
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold mb-4 text-teal-800">Evaluación por Rúbrica</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="p-4 bg-slate-100 rounded-lg">
+                    <h3 class="font-bold">Interpretación y Objetivos: 3/4</h3>
+                    <p class="text-sm">El equipo vincula correctamente el Lean Services con los tiempos de ciclo, pero el análisis del "por qué" de las variaciones es aún superficial.</p>
+                </div>
+                <div class="p-4 bg-slate-100 rounded-lg">
+                    <h3 class="font-bold">Patrones y Tendencias: 3/4</h3>
+                    <p class="text-sm">Se identifican cuellos de botella, pero falta una correlación más fuerte entre la carga de trabajo y el sistema de asignación propuesto.</p>
+                </div>
+                <div class="p-4 bg-slate-100 rounded-lg">
+                    <h3 class="font-bold">Análisis Comparativo: 4/4</h3>
+                    <p class="text-sm">Excelente integración de literatura técnica (Gupta, Pinedo, Sinatrya) para justificar las decisiones de scheduling.</p>
+                </div>
+                <div class="p-4 bg-slate-100 rounded-lg">
+                    <h3 class="font-bold">Rigor Estadístico: 3/4</h3>
+                    <p class="text-sm">Buena estructuración conceptual, pero requiere integrar datos reales de capacidad de proceso para validar la mejora esperada.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold mb-4 text-slate-900">Observaciones del Consultor</h2>
+            <ul class="list-disc ml-5 space-y-2 text-slate-700">
+                <li><strong>Metodología:</strong> La transición hacia un modelo de flujo híbrido está bien sustentada. Sugiero aplicar un enfoque DMAIC más riguroso durante la fase de "Control" para evitar la recaída en la ineficiencia.</li>
+                <li><strong>Análisis:</strong> Es imperativo que el análisis de resultados no sea solo teórico. Deben incorporar diagramas de Pareto que sustenten la selección de las reglas de despacho (Dispatching Rules) elegidas.</li>
+                <li><strong>Sugerencia Técnica:</strong> Implementen una prueba piloto controlada con una de las 2 sucursales para obtener datos de validación (Before vs. After) antes de la escalación total.</li>
+            </ul>
+        </section>
+
+        <footer class="text-center text-slate-500 text-sm mt-8 border-t pt-4">
+            Practicum O. Resultados | Consultoría Senior en Ingeniería Industrial
+        </footer>
+    </div>
+
+</body>
+</html>
