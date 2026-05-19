@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Evaluación - Rediseño Ergonómico</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Chosen Palette: Industrial Safety theme. Warm neutrals (slate-50, slate-800) with Safety Orange (amber-500/orange-600) and Engineering Blue (blue-600/blue-700) accents to reflect the biomechanical and safety nature of the project. -->
+
+    <!-- Application Structure Plan: 
+         - Architecture: Executive Evaluation Dashboard.
+         - Rationale: The report compares AS-IS vs TO-BE states using concrete engineering metrics (Newtons, REBA scores) and safety concepts. A dashboard effectively contrasts the hazardous current state against the projected safe state, while organizing the qualitative rubric evaluation into easily digestible cards.
+         - User Flow:
+            1. Executive Summary & Scoring (Macro view).
+            2. Rubric Breakdown (Qualitative assessment).
+            3. Biomechanical Validation (Interactive charts showing force and risk reduction).
+            4. Strategic Findings (Highlighting the PPE paradox and limitations).
+            5. Consultant Recommendations (Tabbed actionable advice). -->
+
+    <!-- Visualization & Content Choices: 
+         1. Force Reduction -> Bar Chart (Chart.js) -> Goal: Compare -> Visually demonstrates the massive drop from 980N to 80N against the 250N NIOSH limit.
+         2. REBA Risk Score -> Bar Chart (Chart.js) -> Goal: Compare -> Shows the shift from 'Very High Risk' (13) to 'Low Risk' (2).
+         3. Rubric & Findings -> Styled HTML/Tailwind Grid -> Goal: Organize -> Makes the extensive text analysis scannable and structured.
+         4. Recommendations -> JS Tabs -> Goal: Organize/Interact -> Keeps the UI clean while offering deep-dive next steps.
+         - CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. Canvas and HTML/CSS only. -->
+
+    <style>
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            overflow-x: hidden;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        @media (min-width: 768px) {
+            .chart-container { height: 350px; }
+        }
+        .tab-btn.active {
+            border-bottom: 2px solid #2563eb;
+            color: #2563eb;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <nav class="bg-slate-900 border-b border-slate-700 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <span class="text-2xl mr-2">⚙️</span>
+                    <span class="font-bold text-xl text-white">Practicum Eval<span class="text-amber-500">O.Resultados</span></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <header class="bg-white border-b border-slate-200 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+                <div class="md:w-2/3">
+                    <div class="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold tracking-wide mb-4">
+                        Evaluación Oficial Completada
+                    </div>
+                    <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-2">
+                        Rediseño Ergonómico y Manejo de Materiales
+                    </h1>
+                    <h2 class="text-xl text-slate-500 mb-6">Empresa: Mykoz | Autoras: Yeliana Y. Andara S., Valeria García V.</h2>
+                    <p class="text-slate-600 leading-relaxed max-w-3xl">
+                        Veredicto del Consultor: Un análisis de resultados brillante. Destaca profundamente la comprensión de las jerarquías de control de riesgos (La Paradoja del EPP) y el rigor de validar teóricamente la solución mediante modelos biomecánicos ante la imposibilidad de pruebas físicas. 
+                    </p>
+                </div>
+                <div class="mt-8 md:mt-0 md:w-1/3 flex justify-center md:justify-end">
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-6 text-center shadow-sm">
+                        <div class="text-sm text-slate-500 uppercase tracking-wide font-semibold mb-1">Calificación Final</div>
+                        <div class="text-6xl font-black text-blue-600">16<span class="text-3xl text-slate-400">/16</span></div>
+                        <div class="mt-2 text-slate-600 font-medium">Nivel: Sobresaliente ⭐⭐⭐⭐</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+
+        <section id="rubrica">
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold border-b-2 border-amber-500 pb-2 inline-block">Evaluación según Rúbrica Oficial</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="font-bold text-lg text-slate-800">1. Interpretación y Objetivos</h3>
+                        <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-bold">4/4 PTS</span>
+                    </div>
+                    <p class="text-slate-600 text-sm">
+                        Interpretación profunda. El equipo no solo reporta la reducción de 980 N a 80 N, sino que explica críticamente que esto evita la compresión espinal en L5/S1. Comprenden exactamente qué significan las cifras en términos de salud ocupacional.
+                    </p>
+                </div>
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="font-bold text-lg text-slate-800">2. Identificación de Patrones</h3>
+                        <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-bold">4/4 PTS</span>
+                    </div>
+                    <p class="text-slate-600 text-sm">
+                        Reconocimiento excepcional de comportamientos. La identificación de la "Paradoja del EPP" (donde el equipo protege cortes pero no resuelve la sobrecarga biomecánica subyacente) denota un entendimiento superior de las dinámicas de riesgo industrial.
+                    </p>
+                </div>
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="font-bold text-lg text-slate-800">3. Análisis Comparativo</h3>
+                        <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-bold">4/4 PTS</span>
+                    </div>
+                    <p class="text-slate-600 text-sm">
+                        Contextualización impecable. Se contrastan los datos obtenidos y las propuestas directamente contra el estándar NIOSH (250N) y las normativas mexicanas (NOM-006-STPS-2023). La comparación entre los modelos de rampa (A vs B vs Seleccionado) es metódica.
+                    </p>
+                </div>
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="font-bold text-lg text-slate-800">4. Rigor Estadístico e Ingeniería</h3>
+                        <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-bold">4/4 PTS</span>
+                    </div>
+                    <p class="text-slate-600 text-sm">
+                        Uso avanzado de herramientas. Aunque la rampa no se construyó físicamente (limitante declarada honestamente), el modelado matemático (diagramas de cuerpo libre) y el uso de las matrices IPER y puntajes REBA validan concluyentemente la viabilidad del diseño.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section id="biomecanica">
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold border-b-2 border-blue-600 pb-2 inline-block">Validación Biomecánica (Ingeniería Teórica)</h2>
+                <p class="mt-4 text-slate-600">
+                    Proyección de la reducción de riesgo basada en el diseño de rampa a 15° y malacate mecánico.
+                </p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 flex flex-col">
+                    <h3 class="font-bold text-lg mb-2 text-center">Fuerza de Empuje Requerida vs Límite</h3>
+                    <p class="text-sm text-slate-500 mb-4 text-center">Reducción del 91.8% en el esfuerzo de tracción</p>
+                    <div class="flex-grow flex items-center justify-center w-full">
+                        <div class="chart-container">
+                            <canvas id="forceChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="mt-4 p-3 bg-blue-50 rounded text-sm text-blue-800 border border-blue-100 text-center">
+                        Cumplimiento absoluto con el límite NIOSH.
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 flex flex-col">
+                    <h3 class="font-bold text-lg mb-2 text-center">Proyección de Riesgo Ergonómico (REBA)</h3>
+                    <p class="text-sm text-slate-500 mb-4 text-center">Mitigación del riesgo crítico postural</p>
+                    <div class="flex-grow flex items-center justify-center w-full">
+                        <div class="chart-container">
+                            <canvas id="rebaChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="mt-4 p-3 bg-blue-50 rounded text-sm text-blue-800 border border-blue-100 text-center">
+                        Transición de Nivel de Riesgo "Muy Alto" a "Bajo".
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="hallazgos">
+            <div class="bg-slate-800 rounded-xl p-8 shadow-md text-white">
+                <h2 class="text-2xl font-bold border-b-2 border-amber-500 pb-2 inline-block mb-6">Hallazgos Estratégicos del Proyecto</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div>
+                        <div class="text-4xl mb-4">🦺</div>
+                        <h3 class="text-lg font-bold text-amber-400 mb-2">La "Paradoja del EPP"</h3>
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            Excelente observación técnica. Se comprobó que el EPP (botas, guantes) redujo incidentes superficiales en un 70%, pero el equipo demostró que no soluciona la raíz biomecánica (980 N). El EPP es una barrera, no la solución ingenieril.
+                        </p>
+                    </div>
+                    <div>
+                        <div class="text-4xl mb-4">⏱️</div>
+                        <h3 class="text-lg font-bold text-blue-400 mb-2">Eliminación de "Muda"</h3>
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            Los resultados proyectan que el sistema de rampa fija eliminará los desperdicios de "Movimiento" y "Espera" en el alineamiento manual actual. Se estima una reducción teórica del 44% en el tiempo de ciclo de la operación.
+                        </p>
+                    </div>
+                    <div>
+                        <div class="text-4xl mb-4">📋</div>
+                        <h3 class="text-lg font-bold text-amber-400 mb-2">Manejo de Limitantes</h3>
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            Se documentó madurez investigativa al admitir que la imposibilidad de fabricar físicamente la rampa limitó la recolección de datos empíricos de uso, justificando la validez del proyecto mediante robustos criterios de diseño y normativas.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="recomendaciones">
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold border-b-2 border-blue-600 pb-2 inline-block">Sugerencias del Consultor (Siguientes Pasos)</h2>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="flex flex-col sm:flex-row border-b border-slate-200 bg-slate-50">
+                    <button class="tab-btn active px-6 py-4 text-sm font-medium hover:bg-slate-100 transition focus:outline-none" onclick="openTab(event, 'rec1')">
+                        1. Prototipado Físico
+                    </button>
+                    <button class="tab-btn px-6 py-4 text-sm font-medium hover:bg-slate-100 transition focus:outline-none" onclick="openTab(event, 'rec2')">
+                        2. Validación Empírica PDCA
+                    </button>
+                    <button class="tab-btn px-6 py-4 text-sm font-medium hover:bg-slate-100 transition focus:outline-none" onclick="openTab(event, 'rec3')">
+                        3. Dinamometría In-Situ
+                    </button>
+                </div>
+                <div class="p-8 min-h-[250px]">
+                    <div id="rec1" class="tab-content block">
+                        <h3 class="text-xl font-bold text-slate-800 mb-2">Transición a Prototipo Funcional</h3>
+                        <p class="text-slate-600 mb-4">
+                            Toda la ingeniería teórica es sólida. El siguiente paso ineludible es la fabricación de un prototipo a escala real. Sugiero utilizar aceros comerciales de fácil soldadura para la primera iteración de la rampa a 15°. Es crítico probar la interfaz real entre el malacate, el cable y el punto de anclaje de la máquina de helados.
+                        </p>
+                    </div>
+                    <div id="rec2" class="tab-content hidden">
+                        <h3 class="text-xl font-bold text-slate-800 mb-2">Cierre del Ciclo PDCA en Campo</h3>
+                        <p class="text-slate-600 mb-4">
+                            Los resultados presentados cubren "Plan" y partes de "Do". Una vez construido el prototipo, deben ejecutar el "Check" en al menos 3 eventos reales. ¿Las llantas SUPO de 200mm realmente no se hunden en la arena de Yucatán? Requiero métricas empíricas post-implementación para contrastar con las proyecciones teóricas.
+                        </p>
+                    </div>
+                    <div id="rec3" class="tab-content hidden">
+                        <h3 class="text-xl font-bold text-slate-800 mb-2">Medición Dinamométrica Real</h3>
+                        <p class="text-slate-600 mb-4">
+                            Actualmente, la fuerza proyectada de 80 N proviene de una fórmula de diagrama de cuerpo libre. Para el análisis de resultados post-implementación, recomiendo adquirir o alquilar un dinamómetro industrial para medir la tensión exacta generada al arrastrar la máquina en las diferentes superficies (pasto, arena, concreto) y validar matemáticamente el coeficiente de fricción asumido.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-900 text-slate-400 py-8 text-center mt-12">
+        <div class="max-w-7xl mx-auto px-4">
+            <p>&copy; 2026 Practicum O. Resultados - Consultoría Senior de Ingeniería.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Chart.defaults.font.family = "'Segoe UI', system-ui, sans-serif";
+            Chart.defaults.color = '#64748b';
+            
+            const ctxForce = document.getElementById('forceChart').getContext('2d');
+            new Chart(ctxForce, {
+                type: 'bar',
+                data: {
+                    labels: ['Fuerza Actual (N)', 'Límite Seguro (NIOSH)', 'Fuerza con Malacate'],
+                    datasets: [{
+                        data: [980, 250, 80],
+                        backgroundColor: ['#ef4444', '#f59e0b', '#22c55e'],
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) { return context.parsed.y + ' Newtons'; }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Fuerza (Newtons)' }
+                        }
+                    }
+                }
+            });
+
+            const ctxReba = document.getElementById('rebaChart').getContext('2d');
+            new Chart(ctxReba, {
+                type: 'bar',
+                data: {
+                    labels: ['Nivel REBA Actual (Riesgo Crítico)', 'Nivel REBA Proyectado (Riesgo Bajo)'],
+                    datasets: [{
+                        data: [13, 2],
+                        backgroundColor: ['#ef4444', '#22c55e'],
+                        borderRadius: 4,
+                        barThickness: 60
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 15,
+                            title: { display: true, text: 'Puntaje REBA' }
+                        }
+                    }
+                }
+            });
+        });
+
+        function openTab(evt, tabName) {
+            var tabContents = document.getElementsByClassName("tab-content");
+            for (var i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.add("hidden");
+                tabContents[i].classList.remove("block");
+            }
+            var tabBtns = document.getElementsByClassName("tab-btn");
+            for (var i = 0; i < tabBtns.length; i++) {
+                tabBtns[i].classList.remove("active");
+            }
+            document.getElementById(tabName).classList.remove("hidden");
+            document.getElementById(tabName).classList.add("block");
+            evt.currentTarget.classList.add("active");
+        }
+    </script>
+</body>
+</html>
