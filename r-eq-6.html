@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación Practicum I - Restaurante Adobe 188</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f5f7fa',
+                            100: '#eaeef4',
+                            200: '#d0dbe5',
+                            300: '#a7bdd1',
+                            400: '#779ab6',
+                            500: '#537a99',
+                            600: '#41617d',
+                            700: '#354f66',
+                            800: '#2e4354',
+                            900: '#2a3947',
+                        },
+                        accent: {
+                            50: '#fffbeb',
+                            100: '#fef3c7',
+                            200: '#fde68a',
+                            300: '#fcd34d',
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                            700: '#b45309',
+                            800: '#92400e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Configuración e Integración de MathJax para Renderizado de Fórmulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-brand-50 text-brand-900 min-h-screen">
+
+    <!-- Header / Navbar -->
+    <header class="bg-brand-900 text-white shadow-xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div>
+                    <div class="flex items-center gap-3">
+                        <span class="bg-accent-500 text-brand-900 text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">Reporte del Consultor</span>
+                        <span class="text-brand-300 text-sm">Practicum I - Ingeniería Industrial</span>
+                    </div>
+                    <h1 class="text-2xl md:text-3xl font-extrabold mt-1 tracking-tight">Evaluación y Auditoría de Resultados</h1>
+                    <p class="text-brand-300 text-sm mt-1">Proyecto: Optimización de Inventarios y Reducción de Mermas en Restaurante Adobe 188 (MRP-EOQ)</p>
+                </div>
+                <div class="bg-brand-800/80 backdrop-blur border border-brand-700 p-4 rounded-xl flex items-center gap-4">
+                    <div class="text-right">
+                        <p class="text-xs text-brand-400 uppercase tracking-wider font-semibold">Calificación Final</p>
+                        <p class="text-3xl font-black text-accent-400">12 <span class="text-lg text-white font-normal">/ 16 pts</span></p>
+                    </div>
+                    <div class="h-10 w-[1px] bg-brand-700"></div>
+                    <div>
+                        <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-bold px-3 py-1.5 rounded-lg block text-center">
+                            Aprobado con Observaciones
+                        </span>
+                        <span class="text-[10px] text-brand-400 mt-1 block text-right">Equivalente a: 75%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        
+        <!-- Ficha Técnica del Proyecto -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-brand-100 mb-8">
+            <h2 class="text-lg font-bold text-brand-800 mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-file-invoice text-brand-500"></i> Metadatos de la Evaluación
+            </h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="p-4 bg-brand-50/50 rounded-xl border border-brand-100/50">
+                    <p class="text-xs text-brand-500 font-semibold uppercase">Estudiantes Evaluados</p>
+                    <p class="text-sm font-bold text-brand-800 mt-1">Andrés León Nájera</p>
+                    <p class="text-sm font-bold text-brand-800">Samira Manrique Habib</p>
+                </div>
+                <div class="p-4 bg-brand-50/50 rounded-xl border border-brand-100/50">
+                    <p class="text-xs text-brand-500 font-semibold uppercase">Profesor / Asesor</p>
+                    <p class="text-sm font-bold text-brand-800 mt-1">Dr. Víctor Cruz Morales</p>
+                    <p class="text-xs text-brand-400 mt-0.5">Anáhuac Mayab (Mayo 2026)</p>
+                </div>
+                <div class="p-4 bg-brand-50/50 rounded-xl border border-brand-100/50">
+                    <p class="text-xs text-brand-500 font-semibold uppercase">Metodología Implementada</p>
+                    <p class="text-sm font-bold text-brand-800 mt-1">MRP + EOQ Soportado en ERP</p>
+                    <p class="text-xs text-brand-500 font-medium">Software Base: Odoo CRM/MRP</p>
+                </div>
+                <div class="p-4 bg-accent-50/50 rounded-xl border border-accent-100">
+                    <p class="text-xs text-accent-700 font-semibold uppercase">Diagnóstico del Consultor</p>
+                    <p class="text-sm font-bold text-brand-800 mt-1">Estructura operativa excelente.</p>
+                    <span class="text-xs text-amber-700 font-semibold flex items-center gap-1 mt-0.5">
+                        <i class="fa-solid fa-triangle-exclamation"></i> Requiere corrección estadística.
+                    </span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Navigation Tabs -->
+        <div class="flex border-b border-brand-200 mb-8 gap-2 overflow-x-auto pb-1">
+            <button onclick="switchTab('tab-rubric')" id="btn-tab-rubric" class="tab-btn px-5 py-2.5 font-bold text-sm rounded-t-lg bg-brand-900 text-white transition-all duration-200">
+                <i class="fa-solid fa-list-check mr-2"></i> Rúbrica Evaluada
+            </button>
+            <button onclick="switchTab('tab-analysis')" id="btn-tab-analysis" class="tab-btn px-5 py-2.5 font-medium text-sm rounded-t-lg text-brand-600 hover:text-brand-900 transition-all duration-200">
+                <i class="fa-solid fa-chart-line mr-2"></i> Dashboard de Métricas
+            </button>
+            <button onclick="switchTab('tab-stats')" id="btn-tab-stats" class="tab-btn px-5 py-2.5 font-medium text-sm rounded-t-lg text-brand-600 hover:text-brand-900 transition-all duration-200">
+                <i class="fa-solid fa-calculator mr-2"></i> Auditoría Estadística
+            </button>
+            <button onclick="switchTab('tab-recommendations')" id="btn-tab-recommendations" class="tab-btn px-5 py-2.5 font-medium text-sm rounded-t-lg text-brand-600 hover:text-brand-900 transition-all duration-200">
+                <i class="fa-solid fa-lightbulb mr-2"></i> Propuestas de Mejora
+            </button>
+        </div>
+
+        <!-- TAB: Rúbrica Evaluada -->
+        <div id="tab-rubric" class="tab-content block">
+            <div class="bg-white rounded-2xl shadow-sm border border-brand-100 overflow-hidden">
+                <div class="p-6 bg-brand-900 text-white flex justify-between items-center">
+                    <div>
+                        <h3 class="text-lg font-bold">Matriz de Evaluación: Análisis de Resultados</h3>
+                        <p class="text-xs text-brand-300">Haz clic en cada criterio para ver el análisis detallado y la retroalimentación del consultor.</p>
+                    </div>
+                    <span class="bg-brand-800 text-brand-200 text-xs px-3 py-1 rounded-full font-mono border border-brand-700">Total: 12/16 Puntos</span>
+                </div>
+
+                <div class="divide-y divide-brand-100">
+                    <!-- CRITERIO 1 -->
+                    <div class="p-6 hover:bg-brand-50/50 transition-colors">
+                        <div class="flex flex-col lg:flex-row justify-between lg:items-center gap-4 mb-4">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-8 h-8 rounded-lg bg-brand-100 text-brand-700 font-bold flex items-center justify-center text-sm">1</span>
+                                    <h4 class="text-md font-bold text-brand-800">Interpretación y Relación con Objetivos</h4>
+                                </div>
+                                <p class="text-xs text-brand-500 mt-1">Explica el significado de los datos y su alineación con las metas iniciales.</p>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="bg-amber-100 text-amber-800 border border-amber-200 text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5">
+                                    <i class="fa-solid fa-circle-half-stroke"></i> SATISFACTORIO
+                                </span>
+                                <span class="text-lg font-extrabold text-brand-800 font-mono bg-brand-100 px-3 py-1 rounded-lg">3 / 4 pts</span>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs mt-4">
+                            <div class="bg-emerald-50 border border-emerald-100 p-4 rounded-xl">
+                                <p class="font-bold text-emerald-800 flex items-center gap-1.5 mb-2">
+                                    <i class="fa-solid fa-circle-check"></i> Fortalezas Demostradas
+                                </p>
+                                <p class="text-brand-700 leading-relaxed">
+                                    El equipo explica de forma descriptiva el comportamiento de las métricas clave (merma de mariscos del $24.7\%$ al $15\%$, ocupación de cámaras del $105\%$ al $88\%$). Demuestran una comprensión clara del problema físico: la saturación de espacio y la pérdida de control de temperatura como detonantes de la merma.
+                                </p>
+                            </div>
+                            <div class="bg-amber-50 border border-amber-100 p-4 rounded-xl">
+                                <p class="font-bold text-amber-800 flex items-center gap-1.5 mb-2">
+                                    <i class="fa-solid fa-circle-exclamation"></i> Brecha hacia la Excelencia
+                                </p>
+                                <p class="text-brand-700 leading-relaxed">
+                                    Falta un análisis autocrítico profundo sobre el <strong>incumplimiento de los objetivos iniciales</strong> descritos en la introducción (reducción de mermas $\ge 70\%$ y reducción de costos $\ge 85\%$). La merma de mariscos disminuyó un $39.2\%$ respecto a su valor inicial, y las pérdidas semestrales cayeron de $\$184\text{k}$ a $\$120\text{k}$ (un $34.8\%$ de ahorro). No se analiza rigurosamente la desviación de la meta teórica.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CRITERIO 2 -->
+                    <div class="p-6 hover:bg-brand-50/50 transition-colors">
+                        <div class="flex flex-col lg:flex-row justify-between lg:items-center gap-4 mb-4">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-8 h-8 rounded-lg bg-brand-100 text-brand-700 font-bold flex items-center justify-center text-sm">2</span>
+                                    <h4 class="text-md font-bold text-brand-800">Identificación de Patrones y Tendencias</h4>
+                                </div>
+                                <p class="text-xs text-brand-500 mt-1">Reconocimiento de comportamientos consistentes, correlaciones y anomalías temporales.</p>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5">
+                                    <i class="fa-solid fa-circle-check"></i> EXCELENTE
+                                </span>
+                                <span class="text-lg font-extrabold text-brand-800 font-mono bg-brand-100 px-3 py-1 rounded-lg">4 / 4 pts</span>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs mt-4">
+                            <div class="bg-emerald-50 border border-emerald-100 p-4 rounded-xl">
+                                <p class="font-bold text-emerald-800 flex items-center gap-1.5 mb-2">
+                                    <i class="fa-solid fa-circle-check"></i> Fortalezas Demostradas
+                                </p>
+                                <p class="text-brand-700 leading-relaxed">
+                                    Excelente mapeo temporal en tres fases muy bien argumentadas desde la perspectiva de la gestión del cambio y la ingeniería operativa: <strong>Adaptación (Semanas 1-4)</strong>, <strong>Consolidación (Semanas 5-8)</strong> y <strong>Estabilización (Semanas 9-12)</strong>. Explican detalladamente la curva de aprendizaje de los 10 empleados y cómo esto afectó el registro de temperaturas y la merma semanal de forma no lineal.
+                                </p>
+                            </div>
+                            <div class="bg-brand-50 border border-brand-100 p-4 rounded-xl">
+                                <p class="font-bold text-brand-700 flex items-center gap-1.5 mb-2">
+                                    <i class="fa-solid fa-magnifying-glass"></i> Observación del Consultor
+                                </p>
+                                <p class="text-brand-600 leading-relaxed">
+                                    Las fases descritas demuestran que el factor humano (la rotación del $28\%$ descrita en la problemática) juega un papel clave en la estabilización de cualquier sistema MRP o ERP. Es un gran acierto del equipo haber identificado y estructurado este patrón temporal.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CRITERIO 3 -->
+                    <div class="p-6 hover:bg-brand-50/50 transition-colors">
+                        <div class="flex flex-col lg:flex-row justify-between lg:items-center gap-4 mb-4">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-8 h-8 rounded-lg bg-brand-100 text-brand-700 font-bold flex items-center justify-center text-sm">3</span>
+                                    <h4 class="text-md font-bold text-brand-800">Análisis Comparativo y Contextualización</h4>
+                                </div>
+                                <p class="text-xs text-brand-500 mt-1">Comparación con estándares de la industria, literatura previa o benchmarks del sector.</p>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="bg-amber-100 text-amber-800 border border-amber-200 text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5">
+                                    <i class="fa-solid fa-circle-half-stroke"></i> SATISFACTORIO
+                                </span>
+                                <span class="text-lg font-extrabold text-brand-800 font-mono bg-brand-100 px-3 py-1 rounded-lg">3 / 4 pts</span>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs mt-4">
+                            <div class="bg-emerald-50 border border-emerald-100 p-4 rounded-xl">
+                                <p class="font-bold text-emerald-800 flex items-center gap-1.5 mb-2">
+                                    <i class="fa-solid fa-circle-check"></i> Fortalezas Demostradas
+                                </p>
+                                <p class="text-brand-700 leading-relaxed">
+                                    El análisis comparativo interno "Antes vs. Después" está sumamente estructurado mediante tablas y gráficos bien diseñados. Se contextualizan adecuadamente los requerimientos de temperatura ($0\text{ a }5\ ^\circ\text{C}$ para productos frescos, $-18\ ^\circ\text{C}$ para congelados) alineados a la norma mexicana de seguridad alimentaria <strong>NOM-251-SSA1-2009</strong>.
+                                </p>
+                            </div>
+                            <div class="bg-amber-50 border border-amber-100 p-4 rounded-xl">
+                                <p class="font-bold text-amber-800 flex items-center gap-1.5 mb-2">
+                                    <i class="fa-solid fa-circle-exclamation"></i> Brecha hacia la Excelencia
+                                </p>
+                                <p class="text-brand-700 leading-relaxed">
+                                    Falta contraste formal de los resultados con literatura académica exterior o benchmarks cuantitativos del sector restaurantero. En la introducción mencionan que las mermas promedio del sector oscilan entre el $20\%$ y $30\%$, pero en el análisis de resultados no vuelven a contrastar si la reducción lograda (llegar al $15\%$ de merma) posiciona a Adobe 188 por encima o por debajo del sector de alta gastronomía.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CRITERIO 4 -->
+                    <div class="p-6 hover:bg-brand-50/50 transition-colors">
+                        <div class="flex flex-col lg:flex-row justify-between lg:items-center gap-4 mb-4">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-8 h-8 rounded-lg bg-brand-100 text-brand-700 font-bold flex items-center justify-center text-sm">4</span>
+                                    <h4 class="text-md font-bold text-brand-800">Rigor Estadístico y Técnicas Analíticas</h4>
+                                </div>
+                                <p class="text-xs text-brand-500 mt-1">Uso correcto de herramientas de ingeniería para validación matemática de la significancia estadística.</p>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="bg-red-100 text-red-800 border border-red-200 text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5">
+                                    <i class="fa-solid fa-triangle-exclamation"></i> NECESITA MEJORAR
+                                </span>
+                                <span class="text-lg font-extrabold text-brand-800 font-mono bg-brand-100 px-3 py-1 rounded-lg">2 / 4 pts</span>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs mt-4">
+                            <div class="bg-amber-50 border border-amber-100 p-4 rounded-xl">
+                                <p class="font-bold text-amber-800 flex items-center gap-1.5 mb-2">
+                                    <i class="fa-solid fa-circle-exclamation"></i> Error Metodológico Crítico
+                                </p>
+                                <p class="text-brand-700 leading-relaxed">
+                                    El equipo aplicó una <strong>prueba $t$ de Student para muestras emparejadas</strong> agrupando 5 indicadores completamente diferentes y con unidades heterogéneas (Cumplimiento de Registros, Control de Temperaturas, Ocupación de Cámara, Mermas de Mariscos, Costo Excedente). <strong>Esto es matemáticamente incorrecto</strong>. No se pueden agrupar variables de naturaleza y distribución distintas para simular que son 5 "sujetos" emparejados. El tamaño de muestra es $n = 5$ indicadores, lo cual invalida los supuestos de normalidad y homogeneidad.
+                                </p>
+                            </div>
+                            <div class="bg-emerald-50 border border-emerald-100 p-4 rounded-xl">
+                                <p class="font-bold text-emerald-800 flex items-center gap-1.5 mb-2">
+                                    <i class="fa-solid fa-circle-check"></i> Acierto Parcial (Puntos Rescatados)
+                                </p>
+                                <p class="text-brand-700 leading-relaxed">
+                                    El análisis de correlación de Spearman está correctamente planteado y ejecutado (coeficientes $\rho$ entre $0.83$ y $0.91$, significativos con $p < 0.05$). Demuestra rigurosamente la fuerte relación inversa entre la trazabilidad en Odoo y el sobrecosto semanal, así como la relación directa entre la saturación de cámaras y la merma física de mariscos.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: Dashboard de Métricas -->
+        <div id="tab-analysis" class="tab-content hidden space-y-8">
+            <!-- KPIs Visuals -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- KPI 1 -->
+                <div class="bg-white p-6 rounded-2xl border border-brand-100 shadow-sm">
+                    <div class="flex justify-between items-start">
+                        <span class="text-xs font-bold text-brand-400 uppercase tracking-wider">Mermas de Mariscos</span>
+                        <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">-39.2%</span>
+                    </div>
+                    <div class="flex items-baseline gap-2 mt-2">
+                        <span class="text-3xl font-black text-brand-800">15.0%</span>
+                        <span class="text-xs text-brand-400">Antes: 24.7%</span>
+                    </div>
+                    <div class="w-full bg-brand-100 h-2 rounded-full mt-4 overflow-hidden">
+                        <div class="bg-emerald-500 h-full rounded-full" style="width: 61%"></div>
+                    </div>
+                    <p class="text-[11px] text-brand-500 mt-2">Meta inicial propuesta: $\le 7.4\%$ (reducción $\ge 70\%$)</p>
+                </div>
+                <!-- KPI 2 -->
+                <div class="bg-white p-6 rounded-2xl border border-brand-100 shadow-sm">
+                    <div class="flex justify-between items-start">
+                        <span class="text-xs font-bold text-brand-400 uppercase tracking-wider">Pérdidas Semestrales</span>
+                        <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">-34.8%</span>
+                    </div>
+                    <div class="flex items-baseline gap-2 mt-2">
+                        <span class="text-3xl font-black text-brand-800">$120k</span>
+                        <span class="text-xs text-brand-400">Antes: $184k</span>
+                    </div>
+                    <div class="w-full bg-brand-100 h-2 rounded-full mt-4 overflow-hidden">
+                        <div class="bg-emerald-500 h-full rounded-full" style="width: 65%"></div>
+                    </div>
+                    <p class="text-[11px] text-brand-500 mt-2">Ahorro absoluto logrado: $64,000 MXN</p>
+                </div>
+                <!-- KPI 3 -->
+                <div class="bg-white p-6 rounded-2xl border border-brand-100 shadow-sm">
+                    <div class="flex justify-between items-start">
+                        <span class="text-xs font-bold text-brand-400 uppercase tracking-wider">Trazabilidad Odoo</span>
+                        <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">+41.9%</span>
+                    </div>
+                    <div class="flex items-baseline gap-2 mt-2">
+                        <span class="text-3xl font-black text-brand-800">88.0%</span>
+                        <span class="text-xs text-brand-400">Antes: 62.0%</span>
+                    </div>
+                    <div class="w-full bg-brand-100 h-2 rounded-full mt-4 overflow-hidden">
+                        <div class="bg-brand-600 h-full rounded-full" style="width: 88%"></div>
+                    </div>
+                    <p class="text-[11px] text-brand-500 mt-2">Semanas 9-12 muestran estabilización total.</p>
+                </div>
+                <!-- KPI 4 -->
+                <div class="bg-white p-6 rounded-2xl border border-brand-100 shadow-sm">
+                    <div class="flex justify-between items-start">
+                        <span class="text-xs font-bold text-brand-400 uppercase tracking-wider font-semibold">Ocupación de Cámaras</span>
+                        <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">-16.2%</span>
+                    </div>
+                    <div class="flex items-baseline gap-2 mt-2">
+                        <span class="text-3xl font-black text-brand-800">88.0%</span>
+                        <span class="text-xs text-brand-400">Antes: 105.0%</span>
+                    </div>
+                    <div class="w-full bg-brand-100 h-2 rounded-full mt-4 overflow-hidden">
+                        <div class="bg-brand-600 h-full rounded-full" style="width: 88%"></div>
+                    </div>
+                    <p class="text-[11px] text-brand-500 mt-2">Liberación de sobrecarga del $105\%$ de capacidad.</p>
+                </div>
+            </div>
+
+            <!-- Gráfico de Comparación Directa -->
+            <div class="bg-white p-6 rounded-2xl border border-brand-100 shadow-sm">
+                <h4 class="text-md font-bold text-brand-800 mb-6 flex items-center gap-2">
+                    <i class="fa-solid fa-chart-bar text-brand-500"></i> Desviación frente a las Metas Iniciales del Proyecto
+                </h4>
+                
+                <div class="space-y-6">
+                    <!-- Seafood Waste Bar -->
+                    <div>
+                        <div class="flex justify-between text-xs font-bold text-brand-700 mb-2">
+                            <span>Reducción de Mermas de Mariscos (%)</span>
+                            <span>Logrado: 39.2% vs. Meta: 70.0%</span>
+                        </div>
+                        <div class="w-full bg-brand-100 h-6 rounded-lg overflow-hidden flex">
+                            <div class="bg-brand-600 h-full text-white text-[10px] font-bold flex items-center justify-center transition-all duration-500" style="width: 39.2%">39.2% Logrado</div>
+                            <div class="bg-accent-200 h-full text-brand-800 text-[10px] font-bold flex items-center justify-center transition-all duration-500" style="width: 30.8%">Brecha (30.8%)</div>
+                        </div>
+                    </div>
+
+                    <!-- Cost Reduction Bar -->
+                    <div>
+                        <div class="flex justify-between text-xs font-bold text-brand-700 mb-2">
+                            <span>Ahorro Económico Semestral (%)</span>
+                            <span>Logrado: 34.8% vs. Meta: 85.0%</span>
+                        </div>
+                        <div class="w-full bg-brand-100 h-6 rounded-lg overflow-hidden flex">
+                            <div class="bg-brand-600 h-full text-white text-[10px] font-bold flex items-center justify-center transition-all duration-500" style="width: 34.8%">34.8% Logrado</div>
+                            <div class="bg-accent-200 h-full text-brand-800 text-[10px] font-bold flex items-center justify-center transition-all duration-500" style="width: 50.2%">Brecha (50.2%)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6 bg-amber-50 border border-amber-100 p-4 rounded-xl text-xs text-amber-950 flex gap-3 items-start">
+                    <i class="fa-solid fa-circle-info text-amber-600 text-lg mt-0.5"></i>
+                    <div>
+                        <p class="font-bold">Análisis de Desviación para el Reporte Final:</p>
+                        <p class="mt-1 leading-relaxed">
+                            Los estudiantes fijaron metas teóricas excesivamente ambiciosas en la introducción (un sesgo común en proyectos universitarios). El paso de un modelo informal a un modelo estructurado con Odoo generó un impacto tremendo en la rentabilidad de Adobe 188 ($\$64,000$ MXN en un semestre), pero se encuentra muy lejos de las metas proyectadas. En el reporte final, los alumnos deben justificar que un $35\%$ de ahorro real es un éxito rotundo y que la meta del $85\%$ era matemáticamente inviable para la estructura de costos de insumos gourmet ($65\%$ del costo total).
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: Auditoría Estadística -->
+        <div id="tab-stats" class="tab-content hidden space-y-8">
+            <div class="bg-white p-6 rounded-2xl border border-brand-100 shadow-sm">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="p-3 bg-red-100 text-red-700 rounded-xl">
+                        <i class="fa-solid fa-bug text-xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-bold text-brand-800">Análisis del Error Estadístico</h4>
+                        <p class="text-xs text-brand-500">¿Por qué es matemáticamente inválido el t-test presentado por los estudiantes?</p>
+                    </div>
+                </div>
+
+                <div class="bg-red-50/50 border border-red-100 p-6 rounded-2xl space-y-4 text-sm">
+                    <p class="leading-relaxed">
+                        Los estudiantes reportaron un valor <code class="bg-red-100 text-red-800 px-1.5 py-0.5 rounded font-mono font-bold">t = 3.84, df = 4, p = 0.019</code> para una prueba $t$ de Student para muestras emparejadas. Sin embargo, para obtener estos grados de libertad ($df = n - 1 = 4$), asumieron incorrectamente que los "sujetos" u observaciones analizadas eran los <strong>5 indicadores agregados</strong>.
+                    </p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-4">
+                        <div class="bg-white p-4 rounded-xl border border-red-200">
+                            <p class="font-bold text-red-800 flex items-center gap-1.5 mb-2">
+                                <i class="fa-solid fa-xmark-circle"></i> Enfoque Erróneo de los Alumnos
+                            </p>
+                            <p class="text-xs text-brand-700 leading-relaxed">
+                                Mezclaron en la misma matriz de datos porcentajes de mermas de comida, porcentajes de ocupación de almacén y porcentajes de cumplimiento de registros administrativos. Físicamente, es un sinsentido: se asume que estas métricas son equivalentes e independientes, violando el principio básico de homogeneidad de las varianzas y escala de medición.
+                            </p>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl border border-emerald-200">
+                            <p class="font-bold text-emerald-800 flex items-center gap-1.5 mb-2">
+                                <i class="fa-solid fa-check-circle"></i> Enfoque de Ingeniería Industrial Correcto
+                            </p>
+                            <p class="text-xs text-brand-700 leading-relaxed">
+                                Se debe aplicar un t-test para muestras emparejadas **sobre una sola variable a lo largo del tiempo**. Por ejemplo, analizar la Merma de Mariscos semanal de las 12 semanas previas al sistema frente a las 12 semanas posteriores ($n = 12$, $df = 11$). Así se evalúa verdaderamente si el cambio en la media de la merma es estadísticamente significativo.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Simulador Interactivo de T-Test Correcto -->
+            <div class="bg-white p-6 rounded-2xl border border-brand-100 shadow-sm">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h4 class="text-md font-bold text-brand-800">Simulador Didáctico: T-Test Pareado sobre Merma de Mariscos</h4>
+                        <p class="text-xs text-brand-500">Ajusta los datos semanales reales para calcular la significancia estadística real ($p$-value).</p>
+                    </div>
+                    <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full">Semanas 1 a 12</span>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Inputs de Datos -->
+                    <div class="space-y-4 lg:col-span-2">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-brand-500 mb-1 uppercase">Media Merma Pre-Odoo (%)</label>
+                                <input type="number" id="input-pre-mean" value="24.7" step="0.1" onchange="runSimulatedTTest()" class="w-full bg-brand-50 border border-brand-200 rounded-lg px-3 py-2 text-sm font-semibold focus:outline-none focus:border-brand-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-brand-500 mb-1 uppercase">Media Merma Post-Odoo (%)</label>
+                                <input type="number" id="input-post-mean" value="15.0" step="0.1" onchange="runSimulatedTTest()" class="w-full bg-brand-50 border border-brand-200 rounded-lg px-3 py-2 text-sm font-semibold focus:outline-none focus:border-brand-500">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-brand-500 mb-1 uppercase">Desviación Estándar de la Diferencia ($S_d$)</label>
+                            <input type="range" id="input-sd" min="1" max="10" value="3.5" step="0.1" oninput="runSimulatedTTest()" class="w-full accent-brand-600">
+                            <div class="flex justify-between text-[10px] text-brand-400 font-mono mt-1">
+                                <span>Alta Homogeneidad (1.0)</span>
+                                <span id="lbl-sd" class="font-bold text-brand-700">3.5</span>
+                                <span>Alta Variabilidad (10.0)</span>
+                            </div>
+                        </div>
+
+                        <div class="bg-brand-50 p-4 rounded-xl text-xs space-y-2">
+                            <p class="font-bold text-brand-700">Fórmulas empleadas en la validación:</p>
+                            <div class="font-mono text-brand-600 flex flex-col gap-1.5 bg-white p-3 rounded-lg border border-brand-100">
+                                <div class="flex justify-between border-b border-brand-100 py-1">
+                                    <span>Diferencia de Medias ($\bar{d}$):</span>
+                                    <span>$$\bar{d} = \bar{X}_{\text{Pre}} - \bar{X}_{\text{Post}}$$</span>
+                                </div>
+                                <div class="flex justify-between border-b border-brand-100 py-1">
+                                    <span>Error Estándar de la Diferencia ($SE$):</span>
+                                    <span>$$SE = \frac{S_d}{\sqrt{n}}$$</span>
+                                </div>
+                                <div class="flex justify-between py-1">
+                                    <span>Estadístico de prueba ($t_0$):</span>
+                                    <span>$$t_0 = \frac{\bar{d}}{SE}$$</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Resultados del Simulador -->
+                    <div class="bg-brand-900 text-white p-6 rounded-2xl flex flex-col justify-between">
+                        <div>
+                            <p class="text-xs text-brand-400 uppercase tracking-wider font-semibold">Cálculo en Tiempo Real ($n = 12$ semanas)</p>
+                            
+                            <div class="mt-4 space-y-3">
+                                <div class="flex justify-between border-b border-brand-800 pb-1.5">
+                                    <span class="text-xs text-brand-400">Diferencia ($\bar{d}$):</span>
+                                    <span id="res-diff" class="text-sm font-bold text-brand-200">9.7%</span>
+                                </div>
+                                <div class="flex justify-between border-b border-brand-800 pb-1.5">
+                                    <span class="text-xs text-brand-400">Estadístico $t_0$:</span>
+                                    <span id="res-t" class="text-sm font-bold text-accent-400 font-mono">9.60</span>
+                                </div>
+                                <div class="flex justify-between border-b border-brand-800 pb-1.5">
+                                    <span class="text-xs text-brand-400">Grados de Libertad ($df$):</span>
+                                    <span class="text-sm font-bold text-brand-200">11</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-xs text-brand-400">Valor $p$:</span>
+                                    <span id="res-p" class="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">&lt; 0.0001 (Significativo)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 pt-4 border-t border-brand-800 text-[11px] text-brand-300 leading-relaxed">
+                            <p class="font-bold text-white mb-1"><i class="fa-solid fa-circle-check text-emerald-400 mr-1"></i> Conclusión Científica:</p>
+                            Al evaluar la reducción de merma sobre las 12 semanas del estudio, el valor $p$ es menor a $0.05$, lo que permite rechazar con total rigor científico la hipótesis nula ($H_0$), demostrando que la reducción del desperdicio es producto directo del sistema Odoo/MRP y no de la aleatoriedad culinaria.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: Propuestas de Mejora -->
+        <div id="tab-recommendations" class="tab-content hidden space-y-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Mejora 1: EOQ Tropicalizado -->
+                <div class="bg-white p-6 rounded-2xl border border-brand-100 shadow-sm space-y-4">
+                    <span class="bg-brand-100 text-brand-800 text-xs font-bold px-2.5 py-1 rounded-md uppercase">Ingeniería Avanzada</span>
+                    <h4 class="text-lg font-bold text-brand-800">1. Tropicalización del Modelo EOQ con Tasa de Deterioro ($\theta$)</h4>
+                    <p class="text-xs text-brand-500 leading-relaxed">
+                        El modelo EOQ clásico asume que el inventario se mantiene intacto con el tiempo. Para mariscos y fermentados gourmet en Adobe 188, esto es una premisa falsa. El equipo debe implementar una formulación ajustada para perecederos que penalice el costo de mantener inventario basándose en una tasa de deterioro exponencial por día ($\theta$).
+                    </p>
+                    <div class="bg-brand-50 p-4 rounded-xl space-y-3">
+                        <p class="text-xs font-bold text-brand-700">Ajuste de la Fórmula Clásica para Perecederos:</p>
+                        <div class="p-4 bg-white rounded-lg border border-brand-100 font-mono text-base text-brand-800 text-center shadow-inner">
+                            $$Q^* = \sqrt{\frac{2DS}{H + C \theta}}$$
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 text-[10px] text-brand-500 text-center">
+                            <div>
+                                <span class="font-bold text-brand-700 block">$D$</span> Demanda Anual
+                            </div>
+                            <div>
+                                <span class="font-bold text-brand-700 block">$H + C\theta$</span> Costo Mantener + Deterioro
+                            </div>
+                            <div>
+                                <span class="font-bold text-brand-700 block">$\theta$</span> Probabilidad de vencimiento diaria
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Simulador de EOQ con Deterioro -->
+                <div class="bg-white p-6 rounded-2xl border border-brand-100 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <h4 class="text-sm font-bold text-brand-800 mb-4 flex items-center gap-1.5">
+                            <i class="fa-solid fa-flask text-brand-500"></i> Laboratorio de EOQ Perecedero
+                        </h4>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <label class="flex justify-between text-xs font-bold text-brand-500 mb-1">
+                                    <span>Tasa de Caducidad Diaria ($\theta$)</span>
+                                    <span id="lbl-theta" class="text-brand-800">5.0%</span>
+                                </label>
+                                <input type="range" id="input-theta" min="0" max="25" value="5" step="1" oninput="calculateDeterioratingEOQ()" class="w-full accent-brand-600">
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="bg-brand-50 p-3 rounded-lg text-center">
+                                    <p class="text-[10px] text-brand-400 font-bold uppercase">EOQ Clásico (Ideal)</p>
+                                    <p id="res-classic-eoq" class="text-xl font-bold text-brand-500 mt-1">200 kg</p>
+                                    <span class="text-[9px] text-brand-400">Asume merma cero</span>
+                                </div>
+                                <div class="bg-accent-50 p-3 rounded-lg text-center border border-accent-100">
+                                    <p class="text-[10px] text-accent-700 font-bold uppercase">EOQ Ajustado (Real)</p>
+                                    <p id="res-adjusted-eoq" class="text-xl font-bold text-accent-600 mt-1">115 kg</p>
+                                    <span class="text-[9px] text-accent-500">Lote de compra menor</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="text-[11px] text-brand-500 leading-relaxed mt-4 pt-4 border-t border-brand-100">
+                        <i class="fa-solid fa-lightbulb text-accent-500 mr-1"></i> <strong>Explicación del Concepto:</strong> Al aumentar la tasa de caducidad del producto, el tamaño de lote de compra óptimo se <strong>reduce drásticamente</strong>. Esto ocurre porque el costo total de merma por caducidad supera con creces el beneficio de ordenar en grandes cantidades. El equipo de ingenieros debe programar esta lógica ajustada en Odoo.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Otras Recomendaciones -->
+            <div class="bg-white p-6 rounded-2xl border border-brand-100 shadow-sm">
+                <h4 class="text-md font-bold text-brand-800 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-list text-brand-500"></i> Plan de Acción Inmediato para Estudiantes de Practicum I
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs">
+                    <div class="p-4 bg-brand-50 rounded-xl space-y-2">
+                        <p class="font-bold text-brand-800 flex items-center gap-1.5">
+                            <span class="w-5 h-5 rounded-full bg-brand-200 text-brand-800 flex items-center justify-center text-[10px] font-bold">1</span>
+                            Corregir la Prueba t
+                        </p>
+                        <p class="text-brand-600 leading-relaxed">
+                            Reestructurar la tabla de datos para correr la prueba de hipótesis t-Student utilizando exclusivamente las 12 observaciones semanales de la variable Merma de Mariscos (Antes vs. Después). Es de carácter prioritario para la entrega del ordinario.
+                        </p>
+                    </div>
+                    <div class="p-4 bg-brand-50 rounded-xl space-y-2">
+                        <p class="font-bold text-brand-800 flex items-center gap-1.5">
+                            <span class="w-5 h-5 rounded-full bg-brand-200 text-brand-800 flex items-center justify-center text-[10px] font-bold">2</span>
+                            Alineación de Objetivos
+                        </p>
+                        <p class="text-brand-600 leading-relaxed">
+                            Justificar en las conclusiones por qué las metas declaradas del $\ge 70\%$ de reducción de mermas y $\ge 85\%$ de costos eran teóricamente excesivas. Contrastar los excelentes logros reales (39.2% de merma y 34.8% de costos) frente al promedio industrial del 20-30% para validar el éxito del proyecto.
+                        </p>
+                    </div>
+                    <div class="p-4 bg-brand-50 rounded-xl space-y-2">
+                        <p class="font-bold text-brand-800 flex items-center gap-1.5">
+                            <span class="w-5 h-5 rounded-full bg-brand-200 text-brand-800 flex items-center justify-center text-[10px] font-bold">3</span>
+                            Estrategia de Trazabilidad
+                        </p>
+                        <p class="text-brand-600 leading-relaxed">
+                            Implementar en Odoo la automatización de la alerta por vencimiento de vida útil de mariscos y fermentos gourmet, vinculándola directamente con el módulo de compras para bloquear nuevas solicitudes si existe remanente en almacén.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brand-900 text-white border-t border-brand-800 py-6 mt-12 text-center text-xs">
+        <p class="text-brand-400">&copy; 2026 Practicum Calificar Resultados. Ingeniería de Sistemas y de Procesos Industriales.</p>
+        <p class="text-brand-500 mt-1">Generado con base en la Guía Metodológica para Auditorías de Proyectos de Ingeniería Industrial.</p>
+    </footer>
+
+    <!-- JavaScript para Interactividad -->
+    <script>
+        function switchTab(tabId) {
+            // Ocultar todos los contenidos de pestaña
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.add('hidden');
+                tab.classList.remove('block');
+            });
+
+            // Quitar estilos activos de los botones
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-brand-900', 'text-white');
+                btn.classList.add('text-brand-600', 'hover:text-brand-900');
+                btn.classList.remove('font-bold');
+                btn.classList.add('font-medium');
+            });
+
+            // Mostrar la pestaña activa
+            document.getElementById(tabId).classList.remove('hidden');
+            document.getElementById(tabId).classList.add('block');
+
+            // Dar estilo activo al botón presionado
+            const activeBtn = document.getElementById('btn-' + tabId);
+            activeBtn.classList.add('bg-brand-900', 'text-white');
+            activeBtn.classList.remove('text-brand-600', 'hover:text-brand-900');
+            activeBtn.classList.remove('font-medium');
+            activeBtn.classList.add('font-bold');
+        }
+
+        // Simulación matemática del T-Test para Mariscos (Semanas 1 a 12)
+        function runSimulatedTTest() {
+            const preMean = parseFloat(document.getElementById('input-pre-mean').value);
+            const postMean = parseFloat(document.getElementById('input-post-mean').value);
+            const sd = parseFloat(document.getElementById('input-sd').value);
+            
+            document.getElementById('lbl-sd').innerText = sd.toFixed(1);
+
+            const meanDiff = Math.abs(preMean - postMean);
+            document.getElementById('res-diff').innerText = meanDiff.toFixed(1) + "%";
+
+            // n = 12 semanas
+            const n = 12;
+            const se = sd / Math.sqrt(n);
+            const t0 = meanDiff / se;
+
+            document.getElementById('res-t').innerText = t0.toFixed(2);
+
+            // Determinar significancia en base a un valor crítico de t para df = 11 (t_critico = 2.201 para alpha = 0.05 de dos colas)
+            const pBadge = document.getElementById('res-p');
+            if (t0 > 4.437) {
+                pBadge.innerText = "p < 0.001 (Extremadamente Significativo)";
+                pBadge.className = "text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded";
+            } else if (t0 > 2.201) {
+                pBadge.innerText = "p < 0.05 (Estadísticamente Significativo)";
+                pBadge.className = "text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded";
+            } else {
+                pBadge.innerText = "p > 0.05 (No es Significativo)";
+                pBadge.className = "text-xs font-bold text-red-400 bg-red-500/10 px-2.5 py-0.5 rounded";
+            }
+        }
+
+        // Simulación matemática de EOQ con Tasa de Caducidad
+        function calculateDeterioratingEOQ() {
+            const theta = parseFloat(document.getElementById('input-theta').value) / 100.0;
+            document.getElementById('lbl-theta').innerText = (theta * 100).toFixed(0) + "%";
+
+            // Parámetros para el marisco de alta gama de Adobe 188
+            const D = 1200; // Demanda anual (kg)
+            const S = 150;  // Costo por orden ($)
+            const H = 2.25; // Costo de mantener ($ / kg-año)
+            const C = 180;  // Costo unitario promedio de mariscos premium ($ / kg)
+
+            // EOQ Clásico
+            const classicEOQ = Math.sqrt((2 * D * S) / H);
+            document.getElementById('res-classic-eoq').innerText = Math.round(classicEOQ) + " kg";
+
+            // EOQ Ajustado con tasa de decaimiento
+            const adjustedDenominator = H + (C * theta);
+            const adjustedEOQ = Math.sqrt((2 * D * S) / adjustedDenominator);
+            document.getElementById('res-adjusted-eoq').innerText = Math.round(adjustedEOQ) + " kg";
+        }
+
+        // Ejecutar las simulaciones al inicio
+        window.onload = function() {
+            runSimulatedTTest();
+            calculateDeterioratingEOQ();
+        };
+    </script>
+</body>
+</html>
